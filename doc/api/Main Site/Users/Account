@@ -1,0 +1,87 @@
+Notes:
+All the calls in this document must have these headers:
+    a) Content-Type: application/json
+    b) Accept: application/json
+    c) Authorization: <token>
+       Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+    d) Error if user is not Authorized for an action
+        {
+            "errors": {
+                "global": [
+                    "Access denied: Api::Controller::AccessDenied"
+                ]
+            }
+        }
+
+
+1. Change password
+
+    Request: PUT /api/users/change_password
+    {
+      "api_user": {
+          "current_password": "PASSWORD 8+ SYMBOLS",
+          "password": "PASSWORD 8+ SYMBOLS",
+          "password_confirmation": "PASSWORD 8+ SYMBOLS"
+      }
+    }
+
+    Response #1: 201 OK
+
+    Errors: (some possible combinations)
+    Response #2:
+    {
+        "errors": {
+            "global": [
+                "Password cannot be changed due to another provider"
+            ]
+        }
+    }
+    Note: it happens when a FB user wants to change a password that he or she never had
+
+    Response #3:
+    {
+       "errors": {
+           "current_password": [
+               "is invalid"
+           ]
+       }
+    }
+
+    Response #4:
+    {
+       "errors": {
+           "current_password": [
+               "parameter is required"
+           ]
+       }
+    }
+
+    Response #5:
+    {
+        "errors": {
+            "password_confirmation": [
+                "doesn't match Password"
+            ],
+            "current_password": [
+                "is invalid"
+            ]
+        }
+    }
+
+    Response #6:
+    {
+        "errors": {
+            "password": [
+                "is too short (minimum is 8 characters)"
+            ],
+            "current_password": [
+                "is invalid"
+            ]
+        }
+    }
+
+
+2.  Sign Out
+
+    Request: DELETE /api/users/sign_out
+    Response 1: 200 OK

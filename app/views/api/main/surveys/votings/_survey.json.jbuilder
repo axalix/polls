@@ -1,0 +1,4 @@
+json.(survey,
+    :id,
+    :kind
+)

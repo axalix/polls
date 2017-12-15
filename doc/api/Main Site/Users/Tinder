@@ -1,0 +1,301 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+        b) Accept: application/json
+        c) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+        d) Error if user is not Authorized for an action
+           {
+               "errors": {
+                   "global": [
+                       "Access denied: Api::Controller::AccessDenied"
+                   ]
+               }
+           }
+
+1. Search among scraped Tinder profiles
+
+  Request: GET /api/users/tinder/profiles?<params>
+
+  Possible Params:
+    age_min - integer
+    age_max - integer
+    gender  - integer. Can be "0" (men), "1" (women)
+    Also pagination params (doc/api/Shared/Pagination) can be used
+
+  Example: /api/users/tinder/profiles?offset=10&age_min=22&age_max=27&gender=0&gender=1&seed=0.244
+
+  Response #1: 200 OK
+  {
+    "profiles": [ ],
+    "more": 0
+  }
+
+  Response #2: 200 OK
+  {
+      "profiles": [
+          {
+              "id": 1096,
+              "uid": "54a5d89d7f1e233a1593de24",
+              "name": "Randa",
+              "bio": "Be who you are and say what you feel, those who mind don't matter, those that matter don't mind.\r\n\r\n\"Never give up on someone that you can't go a day without thinking about\"\r\n\r\n \"There are many things in life that will catch your eye, but only a few will catch your heart... pursue those.\" \r\n\r\n\"The human heart has hidden treasures,\r\nIn secret kept, in silence sealed;­\r\nThe thoughts, the hopes, the dreams, the pleasures,\r\nWhose charms were broken if revealed...\" Charlotte Bronte\r\n\r\n“I’ve missed more than 9,000 shots in my career. I’ve lost almost 300 games. Twenty-six times I’ve been trusted to take the game-winning shot and missed. I’ve failed over and over again in my life. And that is why I succeed.” Michael Jordan",
+              "age": 25,
+              "gender": 1,
+              "photo": "http://images.gotinder.com/54a5d89d7f1e233a1593de24/eb8ff226-d550-44ce-a543-b7e78b2a762b.jpg"
+          },
+          {
+              "id": 1098,
+              "uid": "54b17046fe2c68cf6f30bffd",
+              "name": "Priscilla",
+              "bio": "",
+              "age": 23,
+              "gender": 1,
+              "photo": "http://images.gotinder.com/54b17046fe2c68cf6f30bffd/d331e927-18a7-4413-8fba-4692520aacd3.jpg"
+          }
+      ],
+      ...
+      "more": 1
+  }
+
+2. Get tinder profile
+
+    Request: POST /api/users/tinder/connect
+    {
+            "tinder_user": {
+            "fb_user_id": "464891386855067",
+            "fb_token":   "CAAGm0PX4ZCpsBAA1z6BAZCZBErXjTc1ZB2INOuufZBUSzVEvWlrM6bbBZBJWVH34IxSHkDcJ9LgUjUn3KdSTPa69evP7pafhEbA3wAgpyAPuv9C2CW9gXLcRl04vKgW2AxyxIuM9ADg86dOZA5oidgyH4YgSdyerohzCxhQer7coZCxKIcp2D9rXxNyngV2kEPr7ZBoTordkruFh2inDWVjVzZCiZBtyllkAZCUZD"
+        }
+    }
+
+    Response #1: 200 OK
+    {
+       "token":"ee8515a0-e8da-4885-9bf0-0025c0ee0dd1",
+       "user":{
+          "_id":"5305bd1227d025d42b000106",
+          "active_time":"2014-03-06T00:46:30.673Z",
+          "create_date":"2014-02-20T08:30:10.856Z",
+          "age_filter_max":33,
+          "age_filter_min":20,
+          "api_token":"ee8515a0-e8da-4885-9bf0-0025c0ee0dd1",
+          "bio":"I'm responsible for the crop circles.",
+          "birth_date":"1983-09-02T00:00:00.000Z",
+          "distance_filter":47,
+          "full_name":"Antonio Rodriguez",
+          "gender":1,
+          "gender_filter":0,
+          "name":"Antonio",
+          "ping_time":"2015-01-11T18:37:38.137Z",
+          "discoverable":true,
+          "photos":[
+             {
+                "xdistance_percent":0.75,
+                "id":"c8d466d6-e1ee-43a2-9b81-8857d1afcb82",
+                "xoffset_percent":0.003515625,
+                "yoffset_percent":0,
+                "ydistance_percent":1,
+                "main":false,
+                "fileName":"c8d466d6-e1ee-43a2-9b81-8857d1afcb82.jpg",
+                "fbId":"10100996909149097",
+                "extension":"jpg",
+                "processedFiles":[
+                   {
+                      "width":640,
+                      "height":640,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/640x640_c8d466d6-e1ee-43a2-9b81-8857d1afcb82.jpg"
+                   },
+                   {
+                      "width":320,
+                      "height":320,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/320x320_c8d466d6-e1ee-43a2-9b81-8857d1afcb82.jpg"
+                   },
+                   {
+                      "width":172,
+                      "height":172,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/172x172_c8d466d6-e1ee-43a2-9b81-8857d1afcb82.jpg"
+                   },
+                   {
+                      "width":84,
+                      "height":84,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/84x84_c8d466d6-e1ee-43a2-9b81-8857d1afcb82.jpg"
+                   }
+                ],
+                "url":"http://images.gotinder.com/5305bd1227d025d42b000106/c8d466d6-e1ee-43a2-9b81-8857d1afcb82.jpg"
+             },
+             {
+                "xdistance_percent":1,
+                "id":"3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e",
+                "xoffset_percent":0,
+                "yoffset_percent":0.1183594,
+                "ydistance_percent":0.75,
+                "main":false,
+                "fileName":"3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e.jpg",
+                "fbId":"10100785315095277",
+                "extension":"jpg",
+                "processedFiles":[
+                   {
+                      "width":640,
+                      "height":640,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/640x640_3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e.jpg"
+                   },
+                   {
+                      "width":320,
+                      "height":320,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/320x320_3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e.jpg"
+                   },
+                   {
+                      "width":172,
+                      "height":172,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/172x172_3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e.jpg"
+                   },
+                   {
+                      "width":84,
+                      "height":84,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/84x84_3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e.jpg"
+                   }
+                ],
+                "url":"http://images.gotinder.com/5305bd1227d025d42b000106/3ccfc08d-b8a9-43d1-855b-53da6c6dfd8e.jpg"
+             },
+             {
+                "xdistance_percent":1,
+                "id":"7986f915-b784-43c4-8469-2d29c12907a2",
+                "xoffset_percent":0,
+                "yoffset_percent":0.003515625,
+                "ydistance_percent":0.75,
+                "main":false,
+                "fileName":"7986f915-b784-43c4-8469-2d29c12907a2.jpg",
+                "fbId":"10100996909184027",
+                "extension":"jpg",
+                "processedFiles":[
+                   {
+                      "width":640,
+                      "height":640,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/640x640_7986f915-b784-43c4-8469-2d29c12907a2.jpg"
+                   },
+                   {
+                      "width":320,
+                      "height":320,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/320x320_7986f915-b784-43c4-8469-2d29c12907a2.jpg"
+                   },
+                   {
+                      "width":172,
+                      "height":172,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/172x172_7986f915-b784-43c4-8469-2d29c12907a2.jpg"
+                   },
+                   {
+                      "width":84,
+                      "height":84,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/84x84_7986f915-b784-43c4-8469-2d29c12907a2.jpg"
+                   }
+                ],
+                "url":"http://images.gotinder.com/5305bd1227d025d42b000106/7986f915-b784-43c4-8469-2d29c12907a2.jpg"
+             },
+             {
+                "xdistance_percent":0.75,
+                "id":"c9151c4a-2233-43a5-9cc3-e646344ca85a",
+                "xoffset_percent":0.1253906,
+                "yoffset_percent":0,
+                "ydistance_percent":1,
+                "main":false,
+                "fileName":"c9151c4a-2233-43a5-9cc3-e646344ca85a.jpg",
+                "fbId":"10100996909218957",
+                "extension":"jpg",
+                "processedFiles":[
+                   {
+                      "width":640,
+                      "height":640,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/640x640_c9151c4a-2233-43a5-9cc3-e646344ca85a.jpg"
+                   },
+                   {
+                      "width":320,
+                      "height":320,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/320x320_c9151c4a-2233-43a5-9cc3-e646344ca85a.jpg"
+                   },
+                   {
+                      "width":172,
+                      "height":172,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/172x172_c9151c4a-2233-43a5-9cc3-e646344ca85a.jpg"
+                   },
+                   {
+                      "width":84,
+                      "height":84,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/84x84_c9151c4a-2233-43a5-9cc3-e646344ca85a.jpg"
+                   }
+                ],
+                "url":"http://images.gotinder.com/5305bd1227d025d42b000106/c9151c4a-2233-43a5-9cc3-e646344ca85a.jpg"
+             },
+             {
+                "xdistance_percent":1,
+                "id":"443ddd4a-fb59-4560-8681-9f1e24ea05da",
+                "xoffset_percent":0,
+                "yoffset_percent":0.1453125,
+                "ydistance_percent":0.75,
+                "main":false,
+                "fileName":"443ddd4a-fb59-4560-8681-9f1e24ea05da.jpg",
+                "fbId":"10100996909144107",
+                "extension":"jpg",
+                "processedFiles":[
+                   {
+                      "width":640,
+                      "height":640,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/640x640_443ddd4a-fb59-4560-8681-9f1e24ea05da.jpg"
+                   },
+                   {
+                      "width":320,
+                      "height":320,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/320x320_443ddd4a-fb59-4560-8681-9f1e24ea05da.jpg"
+                   },
+                   {
+                      "width":172,
+                      "height":172,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/172x172_443ddd4a-fb59-4560-8681-9f1e24ea05da.jpg"
+                   },
+                   {
+                      "width":84,
+                      "height":84,
+                      "url":"http://images.gotinder.com/5305bd1227d025d42b000106/84x84_443ddd4a-fb59-4560-8681-9f1e24ea05da.jpg"
+                   }
+                ],
+                "url":"http://images.gotinder.com/5305bd1227d025d42b000106/443ddd4a-fb59-4560-8681-9f1e24ea05da.jpg"
+             }
+          ],
+          "purchases":[
+
+          ]
+       },
+       "versions":{
+          "active_text":"0.0.0",
+          "age_filter":"2.1.0",
+          "matchmaker":"2.1.0",
+          "trending":"10.0.0",
+          "trending_active_text":"10.0.0"
+       },
+       "globals":{
+          "friends":true,
+          "invite_type":"client",
+          "recs_interval":20000,
+          "updates_interval":2000,
+          "recs_size":40,
+          "matchmaker_default_message":"I want you to meet someone. I introduced you on Tinder www.gotinder.com/app",
+          "share_default_text":"<style>body{color:#fff;text-align:center;font-family:HelveticaNeue;text-shadow:0 1px 1px rgba(0,0,0,0.63);}h1{font-size:24px;line-height:24px;margin:0;}p{font-size:16px;margin:8px;}</style><h1>Get a Boost</h1><p><strong>Invite friends</strong> to show up <br/><strong>even higher</strong> in recommendations.</p>",
+          "boost_decay":180,
+          "boost_up":7,
+          "boost_down":8,
+          "sparks":false,
+          "kontagent":false,
+          "sparks_enabled":false,
+          "kontagent_enabled":false,
+          "mqtt":false,
+          "tinder_sparks":true,
+          "moments_interval":30000,
+          "plus":false
+       }
+    }
+
+    Response #2: 403 Forbidden
+    {
+        "errors": {
+            "global": [
+                "Access denied: {\"code\":500,\"error\":\"Access Denied\"}"
+            ]
+        }
+    }

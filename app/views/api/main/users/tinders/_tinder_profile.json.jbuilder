@@ -1,0 +1,9 @@
+json.(tinder_profile,
+    :id,
+    :uid,
+    :name,
+    :bio,
+    :age,
+    :gender,
+    :photo
+)

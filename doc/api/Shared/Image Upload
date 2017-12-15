@@ -1,0 +1,39 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Accept: application/json
+        b) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+
+1. Upload Image
+
+    HEADER: Content-Type: multipart/form-data (?)
+    Request: POST /api/images
+
+    Example:
+    curl -i -H "Authorization: 56c9ba239d409c2d8bd4b15bc00e6ab495a07265cbd6de1371763d608eb9b1a583727da1e8adc040fc64afc3a4bPOST -F "image[resource]=@/home/alexey/grass.png;type=image/png" http://localhost:3000/api/images
+
+    POSTMAN settings: http://c2n.me/j5b4mK.png
+
+    Response #1: 201 CREATED
+    {
+        "id": 20,
+        "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413259776/6fcf0d8858232b58a60a2b470b9d317ca8cde35d.png?1413259776"
+    }
+
+    Response #2: 400 BAD REQUEST
+    {
+        "errors": [
+            "param is missing or the value is empty: resource"
+        ]
+    }
+
+
+2. Get Image: GET /api/images/:id
+
+    HEADER: Content-Type: application/json
+
+    Response #1: 200 OK
+    {
+        "id": 20,
+        "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413259776/6fcf0d8858232b58a60a2b470b9d317ca8cde35d.png?1413259776"
+    }

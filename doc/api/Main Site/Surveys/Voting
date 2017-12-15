@@ -1,0 +1,201 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+        b) Accept: application/json
+        c) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+        d) Error if user is not Authorized for an action
+           {
+               "errors": {
+                   "global": [
+                       "Access denied: Api::Controller::AccessDenied"
+                   ]
+               }
+           }
+
+II.  Here and everywhere "entity" or "survey entity" is a survey option that users can check during the voting process.
+
+III. In this document all the endpoints should be considered in the context of a logged in user who is an author of the survey.
+
+IV.  Possible values for some fields:
+        "publicity_status" possible values: {"private", "public"}
+        "status" possible values:           {"pending", "active", "stopped"}
+        "kind" possible values:             {"text", "photo"}
+
+
+1. Get next (random) PUBLIC survey available for vote: GET /api/surveys/public
+    It will return a list of surveys that match ALL these conditions
+        - have publicity_status as "public",
+        - public_votes_done < public_votes_limit,
+        - status is "active",
+        - survey is not voted by a logged in user,
+        - survey is not created by a logged in user
+
+    Response #1: 200 OK
+    {
+        "id": 1,
+        "kind": "text",
+        "entities": [
+            {
+                "id": 8,
+                "text": "something"
+            }
+        ]
+    }
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Resource not found"
+            ]
+        }
+    }
+
+    NOTE: it may happen if survey doesn't exist OR because of conditions above.
+
+2. List of PUBLIC surveys available for vote: GET /api/surveys/public/all
+    NOTE: we should probably disable this endpoint. I've added it just for the testing purpose.
+
+    Response: 200 OK
+    [
+        {
+            "id": 4,
+            "kind": "photo"
+        },
+        {
+            "id": 5,
+            "kind": "text"
+        }
+    ]
+
+3. Get PUBLIC survey available for vote: GET /api/surveys/public/:id
+    NOTE: we should probably disable this endpoint. I've added it just for the testing purpose.
+
+    NOTE: survey should match conditions from 1.
+
+    Response #1: 200 OK
+    {
+        "id": 4,
+        "kind": "text",
+        "entities": [
+            {
+                "id": 8,
+                "text": "something"
+            }
+        ]
+    }
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=2"
+            ]
+        }
+    }
+
+    NOTE: it may happen if survey doesn't exist OR because of conditions from 1.
+
+4. Get PRIVATE survey available for vote: GET /api/surveys/private/:url_hash
+
+    It will return a list of surveys that match ALL these conditions
+        - have publicity_status as "private",
+        - status is "active",
+        - survey is not voted by a logged in user,
+        - survey is not created by a logged in user
+
+    Response #1: 200 OK
+    {
+        "id": 5,
+        "kind": "text",
+        "entities": [
+            {
+                "id": 8,
+                "text": "something"
+            }
+        ]
+    }
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Resource not found"
+            ]
+        }
+    }
+    NOTE: it may happen if survey doesn't exist OR because of conditions above.
+
+5. PUBLIC survey vote:
+
+    Request: POST /api/surveys/public/:id/vote
+    {
+        "survey_vote": {
+          "survey_entity_id":7
+        }
+    }
+    Response #1: 201 CREATED
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=43"
+            ]
+        }
+    }
+
+    NOTE: it may happen if survey doesn't exist OR because of conditions in 1.
+
+
+    Response #3: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "global": [
+                "Couldn't find a SurveyEntity with 'id'=7 for Survey"
+            ]
+        }
+    }
+
+
+
+6. PRIVATE survey vote:
+
+    Request: POST /api/surveys/private/:url_hash/vote
+    {
+    	"survey_vote": {
+          "survey_entity_id":11
+    	}
+    }
+
+    Response #1: 201 CREATED
+
+
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Resource not found"
+            ]
+        }
+    }
+
+    NOTE: it may happen if survey doesn't exist OR because of conditions in 1.
+
+
+    Response #3: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "global": [
+                "Couldn't find a SurveyEntity with 'id'=7 for Survey"
+            ]
+        }
+    }
+
+    NOTE: it may happen if a survey doesn't have an entity with id "survey_entity_id".
+

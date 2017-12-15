@@ -1,0 +1,94 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+        b) Accept: application/json
+        c) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+        d) Error if user is not Authorized for an action
+           {
+               "errors": {
+                   "global": [
+                       "Access denied: Api::Controller::AccessDenied"
+                   ]
+               }
+           }
+
+1. Add comment
+
+  Request: POST /api/comments/:commented_obj_type/:commented_obj_id
+  Example: POST /api/comments/survey/4
+  {
+      "comment": {
+        "text":"My comment"
+  	  }
+  }
+
+  Params:
+      commented_obj_type: "survey" - required.
+      commented_obj_id: <integer> id of the object (survey id) - required.
+      text: comment itself. One from the predefined list "photo", "selfie", "something else" - required.
+
+  Response #1: 200 OK
+  {
+      "id": 9
+  }
+
+
+  Errors:
+  Response #2: 404 NOT FOUND
+  {
+      "errors": {
+          "global": [
+              "Couldn't find Survey with 'id'=42"
+          ]
+      }
+  }
+
+  Response #3: 422 UNPROCESSABLE ENTITY
+  {
+      "errors": {
+          "text": [
+              "parameter is required"
+          ]
+      }
+  }
+
+
+2. Get all commented_obj comments.
+
+  Request: GET /api/comments/:commented_obj_type/:commented_obj_id
+  Example: GET /api/comments/survey/4
+
+  Params: see "1. Add comment above". Pagination params (doc/api/Shared/Pagination) can be used as well.
+
+  Response #1: 200 OK
+  {
+      "comments": [
+          {
+              "id": 9,
+              "text": "My comment"
+          },
+          {
+              "id": 8,
+              "text": "something else"
+          },
+          {
+              "id": 1,
+              "text": "something else"
+          }
+      ],
+      "more": 0
+  }
+
+  Errors: see "1. Add comment above"
+
+3. Delete commented_obj comment.
+
+  Request: DELETE /api/comments/:commented_obj_type/:commented_obj_id/:comment_id
+  Example: DELETE /api/comments/survey/4/5
+
+  Params: see "1. Add comment above". Pagination params (doc/api/Shared/Pagination) can be used as well.
+
+  Response #1: 200 OK
+
+  Errors: see "1. Add comment above"

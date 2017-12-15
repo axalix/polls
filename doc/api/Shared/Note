@@ -1,0 +1,119 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+        b) Accept: application/json
+        c) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+        d) Error if user is not Authorized for an action
+           {
+               "errors": {
+                   "global": [
+                       "Access denied: Api::Controller::AccessDenied"
+                   ]
+               }
+           }
+
+1. Add note
+
+  Request: POST /api/notes
+  {
+      "note": {
+          "text":"something",
+          "kind": "bio",
+          "source":"TinderBoost"
+      }
+  }
+
+  Response #1: 200 OK
+  {
+      "id": 4
+  }
+
+  Errors:
+  Response #2: 422 UNPROCESSABLE ENTITY
+  {
+      "errors": {
+          "kind": [
+              "is not included in the list",
+              "can't be blank"
+          ],
+          "source": [
+              "is not included in the list",
+              "can't be blank"
+          ]
+      }
+  }
+
+2. Get note
+
+  Request: GET /api/notes/:id
+
+  Response #1: 200 OK
+  {
+      "id": 1,
+      "kind": "bio",
+      "source": "TinderBoost",
+      "text": "something",
+      "status": "active"
+  }
+
+  Response #2: 404 NOT FOUND
+  {
+      "errors": {
+          "global": [
+              "Couldn't find Note with 'id'=2"
+          ]
+      }
+  }
+
+3. Get all notes
+
+  Request: GET /api/notes?kind=<kind>
+
+  Params:
+    kind = 'bio' - required. Filters notes by kind.
+    Also pagination params (doc/api/Shared/Pagination) can be used.
+
+  Response #1: 200 OK
+  {
+      "notes": [
+          {
+              "id": 3,
+              "kind": "bio",
+              "source": "TinderBoost",
+              "text": "something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. something with many words. ",
+              "status": "active"
+          },
+          {
+              "id": 1,
+              "kind": "bio",
+              "source": "TinderBoost",
+              "text": "something",
+              "status": "active"
+          }
+      ],
+      "more": 0
+  }
+
+  Errors:
+  Response #2: 200 OK
+  {
+      "notes": [],
+      "more": 0
+  }
+
+
+4. Delete note
+
+  Request: DELETE /api/notes/:id
+
+  Response #1: 200 OK
+
+  Response #2: 404 NOT FOUND
+  {
+      "errors": {
+          "global": [
+              "Couldn't find Note with 'id'=2"
+          ]
+      }
+  }

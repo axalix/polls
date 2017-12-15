@@ -1,0 +1,27 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+
+1. List of dating sites
+
+    Request: GET /api/dating_sites
+
+    Response #1: 200 OK
+    [
+        {
+            "id": 1,
+            "code": "my_code",
+            "name": "One Dating Site",
+            "url": "http://test.com",
+            "image_url": "http://test.come/img/1.jpg",
+            "keywords": "one,two,three"
+        },
+        {
+            "id": 2,
+            "code": "23424",
+            "name": "One cool site",
+            "url": "http;//yahoo.com",
+            "image_url": "http://yahoo.com/1234.png",
+            "keywords": "apple,pear,orange"
+        }
+    ]

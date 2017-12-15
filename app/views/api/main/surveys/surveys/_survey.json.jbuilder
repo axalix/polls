@@ -1,0 +1,12 @@
+json.(survey,
+    :id,
+    :kind,
+    :status,
+    :url_hash,
+    :url_hash_expires_at,
+    :num_votes,
+    :publicity_status,
+    :public_votes_limit,
+    :public_votes_done,
+    :created_at
+)

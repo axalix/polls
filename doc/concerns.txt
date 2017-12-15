@@ -1,0 +1,109 @@
+1. Pure JSON solution for FB auth: http://stackoverflow.com/questions/23054981/rails-json-api-oauth-authentication
+
+2. Nice API panel / doc: https://github.com/tim-vandecasteele/grape-swagger
+
+3. About Sessions
+    We can't use sessions as we decided to go API / JSON way
+    -----------
+    session[:name] = 'Alexey Kruchinin'
+    - http://jes.al/2013/08/authentication-with-rails-devise-and-angularjs/
+    - https://gist.github.com/jwo/1255275
+    - https://web.archive.org/web/20130928040249/http://jessehowarth.com/devise
+    - https://github.com/roidrage/redis-session-store
+    - http://stackoverflow.com/questions/10451392/how-do-i-set-get-session-vars-in-a-rack-app (sessions var)
+
+    class SessionsController < Devise::SessionsController
+      respond_to :json
+      def create
+        resource = warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Logged in",
+                          :user => current_user
+               }
+      end
+
+      def destroy
+        warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
+        sign_out
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Logged out",
+               }
+      end
+
+      def failure
+        render :status => 401,
+               :json => { :success => false,
+                          :info => "Login Credentials Failed"
+               }
+      end
+
+      def show_current_user
+        warden.authenticate!(:scope => resource_name, :recall => "#{controller_path}#failure")
+        render :status => 200,
+               :json => { :success => true,
+                          :info => "Current User",
+                          :user => current_user
+               }
+
+      end
+    end
+
+4. Redis
+    https://github.com/redis/redis-rb
+
+    irb(main):002:0> require 'rubygems'
+    => true
+    irb(main):003:0> require 'redis'
+    => true
+    irb(main):004:0> r = Redis.new
+    => #<Redis:0x8605b64 @sock=#<TCPSocket:0x8605ab0>, @timeout=5, @port=6379, @db=0, @host="127.0.0.1">
+    irb(main):005:0> r.keys('*')
+
+    ------
+
+    redis-cli -n 2 (for db = 2)
+    redis 127.0.0.1:6379[2]> keys *
+    redis 127.0.0.1:6379[2]> set mykey 1
+    OK
+    redis 127.0.0.1:6379[2]> keys *
+    1) "mykey"
+    2) "myapp:session:5a21b3c3ba529e827218bb2b551b50fd"
+    redis 127.0.0.1:6379[2]> get mykey
+    "1"
+    redis 127.0.0.1:6379[2]> get myapp:session:5a21b3c3ba529e827218bb2b551b50fd
+    "\x04\b{\bI\"\tname\x06:\x06EFI\"\babc\x06;\x00TI\"\nname1\x06;\x00FI\"\babc\x06;\x00TI\"\x0bnamej1\x06;\x00FI\"\babc\x06;\x00T"
+
+    Delete keys from the current DB: FLUSHDB
+
+
+5. About Config files
+    http://railscasts.com/episodes/85-yaml-configuration-file
+
+6. ssh -i TinderBoostKey.pem ec2-user@api.tinderboost.com
+   sudo -i
+   cd  /home/ec2-user/tinder-boost-server/
+   git pull
+   fig build
+   fig up -d
+   fig run web rake db:migrate
+
+7. Postgres:
+
+    Create dump:
+	    sudo -u postgres pg_dump db_name > file.sql
+
+    Restore from dump:
+	    sudo -u postgres psql db_name < file.sql
+
+8. MongoDB:
+
+    Restore from dump:
+	  sudo mongorestore --drop -h 127.0.0.1:27017 -d db_name <directory>
+
+9. Every 30 sec deletion work:
+    watch -n30 find . -iname \'*.JPG\' -type f -mmin +0.5 -delete....
+
+10. Env run:  1633  RAILS_ENV=<name of your env> bundle exec rails c
+    Ex: RAILS_ENV=development bundle exec rake tb:tinder:add_tinder_users

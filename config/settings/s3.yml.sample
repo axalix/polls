@@ -1,0 +1,15 @@
+development:
+  access_key_id:
+  secret_access_key:
+  bucket: 'tinder-boost.uploads.dev'
+  hash_secret:        RANDOM_STRING
+test:
+  access_key_id:
+  secret_access_key:
+  bucket: 'tinder-boost.uploads.tst'
+  hash_secret:        RANDOM_STRING
+production:
+  access_key_id: <%= ENV['AWS_ACCESS_KEY] %>
+  secret_access_key: <%= ENV['AWS_SECRET_KEY'] %>
+  bucket: <%= ENV['S3_BUCKET'] %>
+  hash_secret:        RANDOM_STRING

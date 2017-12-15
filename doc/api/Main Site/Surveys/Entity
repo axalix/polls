@@ -1,0 +1,155 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+        b) Accept: application/json
+        c) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+        d) Error if user is not Authorized for an action
+           {
+               "errors": {
+                   "global": [
+                       "Access denied: Api::Controller::AccessDenied"
+                   ]
+               }
+           }
+
+II.  Here and everywhere "entity" or "survey entity" is a survey option that users can check during the voting process.
+
+III. In this document all the endpoints should be considered in the context of a survey.
+
+IV.  Entities can be added or deleted only if survey is "pending" or "stopped" ("status" field).
+
+1. Assign (add) entity to a survey
+
+    Request: POST /api/surveys/:survey_id/entities
+    Example #1 (text entity):
+    {
+        "survey_entity": {
+            "text":"something"
+        }
+    }
+
+    Example #2 (photo entity):
+    {
+        "survey_entity": {
+            "image_id":17
+        }
+    }
+
+    Response #1: 201 CREATED
+    {
+       "id": 8
+    }
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=17"
+            ]
+        }
+    }
+
+    Response #3: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "global": [
+                "The survey cannot be changed because it is not pending nor stopped"
+            ]
+        }
+    }
+
+    Response #4: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Image with 'id'=7"
+            ]
+        }
+    }
+
+    This error will raise only for "photo" surveys if for image with "id=7" at least one is true:
+        - doesn't exist,
+        - creation time is 15 minutes ago or earlier,
+        - doesn't have a status "active",
+        - already assigned to a survey,
+        - belongs to user, different from one who created a survey
+
+2. Unassign (delete) survey entity: DELETE /api/surveys/:survey_id/entities/:entity_id
+
+    Response #1: 200 OK
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=133"
+            ]
+        }
+    }
+
+    Response #3: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "global": [
+                "The survey cannot be changed because it is not pending nor stopped"
+            ]
+        }
+    }
+
+
+
+3. List entities: GET /api/surveys/:survey_id/entities
+
+    Response #1: 200 OK
+    [
+        {
+            "id": 6,
+            "text": null,
+            "num_votes": 0,
+            "created_at": "2014-09-29T00:06:03.363-05:00",
+            "image": {
+                "id": 22,
+                "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413946295/30bd828f4e0abd51c729049cfca6be7f7c6f3d2b.png?1413946295"
+            }
+        },
+        {
+            "id": 7,
+            "text": null,
+            "num_votes": 0,
+            "created_at": "2014-09-29T00:06:05.512-05:00"
+            "image": {
+                "id": 23,
+                "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413946295/30bd828f4e0abd51c729049cfca6be7f7c6f3d2b.png?1413946295"
+            }
+        }
+    ]
+
+
+    Response #2: 200 OK
+    [
+        {
+            "id": 6,
+            "text": "something",
+            "num_votes": 0,
+            "created_at": "2014-09-29T00:06:03.363-05:00",
+        },
+        {
+            "id": 7,
+            "text": "something 2",
+            "num_votes": 0,
+            "created_at": "2014-09-29T00:06:05.512-05:00"
+        }
+    ]
+
+    Errors:
+    Response 3: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=37"
+            ]
+        }
+    }

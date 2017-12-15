@@ -1,0 +1,19 @@
+PAGINATION:
+I.  Params:
+    1. "offset" - integer.
+        Specifies number of records to skip.
+        If omitted, offset = 0
+
+    2. "seed" - float. Should belong to the interval [0, 1].
+        Specifies the random sorting order with a specific seed to prevent duplicates on different pages.
+        If omitted, sorting order will be by "created_at desc" (newest records come first)
+
+    Limit is always 20 and cannot be changed through parameters.
+
+II. Response:
+    Contains "more" attribute that can be "0" or "1".
+    In the context of current offset specifies is there are more results to retrieve.
+    If "0", there is a big chance that no more results will be returned for a bigger offset
+    (unless new results were added in the DB in between of 2 requests).
+    Can be used in order to hide "more" link if necessary.
+

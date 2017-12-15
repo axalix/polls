@@ -1,0 +1,303 @@
+NOTES:
+I.   All the calls in this document must have these headers:
+        a) Content-Type: application/json
+        b) Accept: application/json
+        c) Authorization: <token>
+           Example: "Authorization: 4233af28e7674dca61b1767baf99b6acada3f6d5c035324a8c66ddf622ab8198c30d0a3ea6a9034f03c1d4e5b463286bf6f7aa9fd06f1021dcc21ba25d729da8"
+        d) Error if user is not Authorized for an action
+           {
+               "errors": {
+                   "global": [
+                       "Access denied: Api::Controller::AccessDenied"
+                   ]
+               }
+           }
+
+II.  Here and everywhere "entity" or "survey entity" is a survey option that users can check during the voting process.
+
+III. In this document all the endpoints should be considered in the context of a logged in user who is an author of the survey.
+
+IV.  Possible values for some fields:
+        "publicity_status" possible values: {"private", "public"}
+        "status" possible values: {"pending", "active", "stopped"}
+
+
+1. Add survey
+
+    Request: POST /api/surveys
+    {
+        "survey": {
+            "kind": "text"
+        }
+    }
+
+    "kind" should be "photo", "text" or "profile"
+    NOTE:  it was "type" before, but Postgres complained as it was reserved - so renamed to "kind"
+
+    Response #1: 201 CREATED
+    {
+       "id": 3
+    }
+
+    Errors:
+    Response #2: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "kind": [
+                "is not included in the list"
+            ]
+        }
+    }
+
+    Response #3: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "kind": [
+                "is not included in the list",
+                "can't be blank"
+            ]
+        }
+    }
+
+    Response #4: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "kind": [
+                "is not included in the list"
+            ]
+        }
+    }
+
+
+
+2. Delete survey: DELETE /api/surveys/:id
+
+    Response #1: 200 OK
+
+    Errors: 404 NOT FOUND
+    Response #2:
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=13"
+            ]
+        }
+    }
+
+    NOTE: physically survey won't be deleted from the database. Only "status" will be changed to "deleted"
+
+3. Start survey: PUT /api/surveys/:id/start
+
+    NOTE: in order to start a survey, there should be at least 2 entities (if kind != 'profile') or precisely 1 entity for kind=='profile'
+
+    Response #1: 200 OK
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=342"
+            ]
+        }
+    }
+
+    Response #3: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "status": [
+                "There should be at least two entities assigned"
+            ]
+        }
+    }
+
+  Response #4: 422 UNPROCESSABLE ENTITY
+    {
+        "errors": {
+            "status": [
+                "There should be one entity assigned"
+            ]
+        }
+    }
+
+4. Stop survey: PUT /api/surveys/:id/stop
+
+    Response #1: 200 OK
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=342"
+            ]
+        }
+    }
+
+
+5. List of user surveys: GET /api/surveys
+
+    Response: 200 OK
+    [
+        {
+            "id": 4,
+            "kind": "text",
+            "status": "pending",
+            "url_hash": "057c87e60174322b3e5fa55a5b499ee4",
+            "url_hash_expires_at": null,
+            "num_votes": 0,
+            "publicity_status": "private",
+            "public_votes_limit": 0,
+            "public_votes_done": 0,
+            "created_at": "2014-10-12T12:21:13.871-05:00"
+        },
+        {
+            "id": 5,
+            "kind": "text",
+            "status": "pending",
+            "url_hash": "35b6264b5b39661e65e116d8286349fd",
+            "url_hash_expires_at": null,
+            "num_votes": 0,
+            "publicity_status": "private",
+            "public_votes_limit": 0,
+            "public_votes_done": 0,
+            "created_at": "2014-10-12T14:32:30.434-05:00"
+        },
+        {
+            "id": 6,
+            "kind": "text",
+            "status": "pending",
+            "url_hash": "75af27fd111b95321f56ba249e689c70",
+            "url_hash_expires_at": null,
+            "num_votes": 0,
+            "publicity_status": "private",
+            "public_votes_limit": 0,
+            "public_votes_done": 0,
+            "created_at": "2014-10-12T14:33:28.939-05:00"
+        }
+    ]
+
+
+6. Show one specific user survey: GET /api/surveys/:id
+
+    Response #1: 200 OK
+    (Text survey)
+    {
+        "id": 2,
+        "kind": "text",
+        "status": "stopped",
+        "url_hash": "75af27fd111b95321f56ba249e689c70",
+        "url_hash_expires_at": null,
+        "num_votes": 0,
+        "publicity_status": "private",
+        "public_votes_limit": 0,
+        "public_votes_done": 0,
+        "created_at": "2014-09-28T22:20:03.447-05:00",
+        "entities": [
+            {
+                "id": 7,
+                "text": "something",
+                "num_votes": 0
+            },
+            {
+                "id": 8,
+                "text": "something 2",
+                "num_votes": 0
+            }
+        ]
+    }
+
+    (Photo survey)
+    Response #1: 200 OK
+    {
+        "id": 3,
+        "kind": "photo",
+        "status": "stopped",
+        "url_hash": "75af27fd111b95321f56ba249e689c70",
+        "url_hash_expires_at": null,
+        "num_votes": 0,
+        "publicity_status": "private",
+        "public_votes_limit": 0,
+        "public_votes_done": 0,
+        "created_at": "2014-09-28T22:20:03.447-05:00",
+        "entities": [
+            {
+                "id": 7,
+                "text": null,
+                "num_votes": 0,
+                "image": {
+                    "id": 22,
+                    "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413946295/30bd828f4e0abd51c729049cfca6be7f7c6f3d2b.png?1413946295"
+                }
+            },
+            {
+                "id": 8,
+                "text": null,
+                "num_votes": 0,
+                "image": {
+                    "id": 23,
+                    "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413946295/30bd828f4e0abd51c729049cfca6be7f7c6f3d2b.png?1413946295"
+                }
+            }
+        ]
+    }
+
+    Errors:
+    Response #3: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=342"
+            ]
+        }
+    }
+
+7. Show results for a survey: GET /api/surveys/:id/results
+    Note: for now the response is exactly the same as for "6. Show one specific user survey".
+          We can customize it later if necessary.
+
+    Response #1: 200 OK
+    {
+        "id": 4,
+        "kind": "photo",
+        "status": "active",
+        "url_hash": "057c87e60174322b3e5fa55a5b499ee4",
+        "url_hash_expires_at": null,
+        "num_votes": 9,
+        "publicity_status": "public",
+        "public_votes_limit": 10,
+        "public_votes_done": 5,
+        "created_at": "2014-10-12T12:21:13.871-05:00",
+        "entities": [
+            {
+                "id": 8,
+                "text": null,
+                "num_votes": 7,
+                "image": {
+                    "id": 22,
+                    "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413946295/30bd828f4e0abd51c729049cfca6be7f7c6f3d2b.png?1413946295"
+                }
+            },
+            {
+                "id": 9,
+                "text": null,
+                "num_votes": 2,
+                "image": {
+                    "id": 23,
+                    "resource_url": "http://s3.amazonaws.com/tinderboost-images/resources/1413946295/30bd828f4e0abd51c729049cfca6be7f7c6f3d2b.png?1413946295"
+                }
+            }
+        ]
+    }
+
+    <TODO: Q> Should we split results onto public and private?
+
+    Errors:
+    Response #2: 404 NOT FOUND
+    {
+        "errors": {
+            "global": [
+                "Couldn't find Survey with 'id'=342"
+            ]
+        }
+    }
